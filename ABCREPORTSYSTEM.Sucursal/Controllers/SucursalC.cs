@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ABCREPORTSYSTEM.Sucursal.Models;
 using ABCREPORTSYSTEM.Sucursal.Services;
+using System;
 
 namespace ABCREPORTSYSTEM.Sucursal.Controllers;
 
@@ -27,9 +28,12 @@ public class SucursalC : ControllerBase
     public async Task<ActionResult<Employee>> GetEmployeById(string username, int id)
     {
 
-
+        string message2 = "No se encontro el users con el ID: " + username;
         var employee = await _empleado.GetemployeeByIdAsync(username);
-
+        if (employee is null)
+        {
+            return NotFound(message2);
+        }
         var response = new Employee
         {
             EmployeeId = employee.EmployeeId,
@@ -39,18 +43,14 @@ public class SucursalC : ControllerBase
             BranchOfficeId= employee.BranchOfficeId,
         };
 
-        if (employee is null)
-        {
-            return NotFound("No se encontro el empleado");
-        }
-
+   
         if (response.BranchOfficeId == id)
         {
-            return Ok(response);
+            return Ok();
         }
         else
         {
-            return BadRequest("ESTE EMPLEADO NO PERTENECE A ESTA SUCURSAL XD");
+            return BadRequest("ESTE EMPLEADO NO PERTENECE A ESTA SUCURSAL");
         }
       
      
@@ -61,8 +61,23 @@ public class SucursalC : ControllerBase
 
         var auto= await _auto.GetAutomobileByIdAsync(vin);
         var sucursal = await _Sucursal.GetBranchOfficeByIdAsync(id);
+        string message = "No se encontro el auto con el ID: " + vin.ToString();
+        string message2 = "No se encontro el auto con el ID: " + id.ToString();
 
+        if (auto is null && sucursal is null)
+        {
+            return NotFound("No se encontro ni la sucursal ni auto");
+        }
 
+        if (auto is null)
+        {
+            return NotFound(message);
+        }
+        if ( sucursal is null)
+        {
+            return NotFound(message2);
+        }
+      
         var responseauto = new Automobile
         {
             AutomobileId = auto.AutomobileId,
@@ -82,20 +97,49 @@ public class SucursalC : ControllerBase
 
         };
 
-        if (auto is null && sucursal is null)
-        {
-            return NotFound("No se encontro ni la sucursal ni auto");
-        }
+        
 
         if(responseauto.BranchOfficeId == responsesucursal.BranchOfficeId)
         {
-            return Ok("Si existe este auto en la sucursal");
+            return Ok(null);
         }
         else
         {
             return NotFound("No existe este auto en la sucursal");
         }
-        
+
+
+        return Ok(null);
+    }
+
+    [HttpGet("Sucursal/{id}")]
+
+    public async Task<ActionResult<Automobile>> GetsucursalbyId(Guid vin, int id)
+    {
+
+       
+        var sucursal = await _Sucursal.GetBranchOfficeByIdAsync(id);
+
+
+ 
+
+        var responsesucursal = new BranchOffice
+        {
+            BranchOfficeId = sucursal.BranchOfficeId,
+            BranchOfficeCountry = sucursal.BranchOfficeCountry,
+            BranchOfficeState = sucursal.BranchOfficeState,
+
+        };
+
+        if (sucursal is null)
+        {
+            return NotFound("No se encontro ni la sucursal ni auto");
+        }
+        else
+        {
+            return Ok(responsesucursal);
+        }
+
 
     }
 

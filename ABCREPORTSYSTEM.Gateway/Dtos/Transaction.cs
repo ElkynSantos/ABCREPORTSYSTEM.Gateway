@@ -4,6 +4,12 @@
     {
         public Guid TransactionId { get; set; }
 
-        public IEnumerable<Error>? Errors { get; set; }
+        public List<string> Errors { get; set; }
+
+        public Transaction()
+        {
+            TransactionId = Guid.NewGuid();
+            Errors = new List<string>();
+        }
     }
 }

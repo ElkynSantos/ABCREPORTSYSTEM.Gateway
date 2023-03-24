@@ -11,6 +11,8 @@ using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Channels;
+using Recolector.Dtos;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 Console.WriteLine("Hello, World!");
 
@@ -31,9 +33,9 @@ using (var StreamReader = new StreamReader(@"C:\Users\elkyn\source\repos\ABCREPO
             using (var connection = factory.CreateConnection())
             {
                 var _channel = connection.CreateModel();
-            
 
-                _channel.QueueDeclare(queue: "transaction", //aqui recibo de gateway la transaction id
+                //aqui recibo de gateway la transaction id
+                _channel.QueueDeclare(queue: "transaction",
                           durable: false,
                           exclusive: false,
                           autoDelete: false,
@@ -52,21 +54,37 @@ using (var StreamReader = new StreamReader(@"C:\Users\elkyn\source\repos\ABCREPO
 
                     var body = ea.Body.ToArray();
                     var transactionid = Encoding.UTF8.GetString(body);
-                    //Console.WriteLine(transactionid);
 
-                  
-                        _channel.QueueDeclare(queue: "init",
+                    var transaction = JsonSerializer.Deserialize<Transaction>(transactionid);
+                    Console.WriteLine(transaction);
+
+                    var data = new DATAS
+                    {
+                        TransactionId = transaction.TransactionId,
+                        Errors = new List<string>(), 
+                        threads = count/50+1
+                    };
+
+                    Console.WriteLine(data.threads);
+                 
+                    _channel.QueueDeclare(queue: "init",
                             durable: false,
                             exclusive: false,
                             autoDelete: false,
                             arguments: null);
 
-                        _channel.BasicPublish(exchange: "",
+                    string dataJson = JsonSerializer.Serialize(data);
+
+                    // Codificar el JSON en UTF-8
+                    byte[] dataBytes = Encoding.UTF8.GetBytes(dataJson);
+
+
+                    _channel.BasicPublish(exchange: "",
                                routingKey: "init",
                                basicProperties: null,
-                               body: body2);
+                               body: dataBytes);
 
-                        Console.WriteLine("Entro donde no debia aun");
+                       
                         for (int i = 0; i < tasks.Length; i++)
                         {
                             int current = i;
@@ -75,6 +93,7 @@ using (var StreamReader = new StreamReader(@"C:\Users\elkyn\source\repos\ABCREPO
                                 int max = (current < count / 50) ? 50 : count % 50;
                                 for (int j = current * 50; j < current * 50 + max; j++)
                                 {
+                                 
                                     Console.WriteLine(j);
                                     using (var channel = connection.CreateModel())
                                     {

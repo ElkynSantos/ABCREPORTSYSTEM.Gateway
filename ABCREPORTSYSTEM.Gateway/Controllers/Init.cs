@@ -5,6 +5,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text;
+using RabbitMQ.Client.Events;
 
 namespace ABCREPORTSYSTEM.Gateway.Controllers
 {
@@ -13,68 +14,62 @@ namespace ABCREPORTSYSTEM.Gateway.Controllers
     public class Init : ControllerBase
     {
 
-        private static readonly List<ABCREPORTSYSTEM.Gateway.Dtos.Error> Errors = new List<ABCREPORTSYSTEM.Gateway.Dtos.Error>
-        {
-            new Dtos.Error()
-            {
-                Id = 1,
-                Description = "El empleado no existe en la sucursal"
-            },
-            new Dtos.Error()
-            {
-                Id = 2,
-                Description = "El auto no existe en la sucursal"
-            },
-            new Dtos.Error()
-            {
-                Id = 3,
-                Description = "El VIN del auto no es valido"
-            },
-            new Dtos.Error()
-            {
-                Id = 4,
-                Description = "El apellido y ID del comprador esta vacio"
-            }
-        };
-        private static readonly List<Transaction> Transactions = new List<Transaction>
-{
-         new Transaction()
-         {
-                TransactionId = Guid.NewGuid(),
-                Errors = Errors
-            }
-        };
+
+        private static readonly List<Transaction> Transactions = new List<Transaction>();
+
 
 
         [HttpGet]
-
-        public  ActionResult<Transaction> Get()
+        public async Task<ActionResult<Transaction>> Get()
         {
             var transaction = Transactions;
-            Transaction body = null;
+    
 
-            foreach (var t in transaction)
-            {
-                body = t;
-            }
+            Transaction nueva = new Transaction();
+          
 
-            string json = JsonSerializer.Serialize(body);
+            string json = JsonSerializer.Serialize(nueva);
 
             byte[] transac = Encoding.UTF8.GetBytes(json);
+
+            var factory = new ConnectionFactory() { HostName = "localhost", Port = 5672 };
+
             try
             {
-                var factory = new ConnectionFactory() { HostName = "localhost", Port = 5672 };
-
                 using (var connection = factory.CreateConnection())
                 {
                     using (var channel = connection.CreateModel())
                     {
                         channel.QueueDeclare("transaction", false, false, false, null);
                         channel.BasicPublish(string.Empty, "transaction", null, transac);
+
+                        // Declare the 'transactionfinal' queue and create a consumer for it.
+                        channel.QueueDeclare("transactionfinal", false, false, false, null);
+                        var consumer = new EventingBasicConsumer(channel);
+                        string result = null;
+                        var taskCompletionSource = new TaskCompletionSource<string>();
+
+                        consumer.Received += (model, ea) =>
+                        {
+                            var responseBytes = ea.Body.ToArray();
+                            result = Encoding.UTF8.GetString(responseBytes);
+                        
+                            taskCompletionSource.SetResult(result);
+                        };
+
+                        channel.BasicConsume("transactionfinal", true, consumer);
+
+                       
+                        await taskCompletionSource.Task;
+
+                        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                        var transactionResult = JsonSerializer.Deserialize<Transaction>(result, options);
+
+                        Transactions.Add(transactionResult);
+                
+                        return Ok(Transactions.LastOrDefault());
                     }
                 }
-
-                return Ok(body.TransactionId);
             }
             catch (Exception e)
             {
