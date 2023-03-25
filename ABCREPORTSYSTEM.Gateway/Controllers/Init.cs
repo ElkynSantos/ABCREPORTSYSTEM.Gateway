@@ -66,7 +66,9 @@ namespace ABCREPORTSYSTEM.Gateway.Controllers
                         var transactionResult = JsonSerializer.Deserialize<Transaction>(result, options);
 
                         Transactions.Add(transactionResult);
-                
+
+
+                        //channel.QueueDelete("init");
                         return Ok(Transactions.LastOrDefault());
                     }
                 }

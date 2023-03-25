@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ABCREPORTSYSTEM.Sucursal", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Recolector", "Recolector\Recolector.csproj", "{FB76F845-111A-4168-84CD-8D6B43453675}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidatorService", "ValidatorService\ValidatorService.csproj", "{66C14687-2309-441F-849B-E893587BC129}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValidatorService", "ValidatorService\ValidatorService.csproj", "{66C14687-2309-441F-849B-E893587BC129}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidatorService2", "ValidatorService2\ValidatorService2.csproj", "{7E3E7049-DFCE-4D8A-83FD-42EAEAD60D15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{66C14687-2309-441F-849B-E893587BC129}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66C14687-2309-441F-849B-E893587BC129}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66C14687-2309-441F-849B-E893587BC129}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E3E7049-DFCE-4D8A-83FD-42EAEAD60D15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E3E7049-DFCE-4D8A-83FD-42EAEAD60D15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E3E7049-DFCE-4D8A-83FD-42EAEAD60D15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E3E7049-DFCE-4D8A-83FD-42EAEAD60D15}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

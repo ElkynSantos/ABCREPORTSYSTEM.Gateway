@@ -44,11 +44,11 @@ using (var _channel = connection.CreateModel())
                                  arguments: null);
 
 
-  
 
-   
+
+
     var _consumer = new EventingBasicConsumer(_channel);
-    _consumer.Received +=  async (model, ea) =>
+    _consumer.Received += async (model, ea) =>
      {
 
 
@@ -57,29 +57,33 @@ using (var _channel = connection.CreateModel())
          var message = Encoding.UTF8.GetString(body);
 
          var transaction = JsonSerializer.Deserialize<DATAS>(message);
-         var data = new DATAS { TransactionId=transaction.TransactionId,
-         Errors=transaction.Errors,
-         threads=transaction.threads};
+         var data = new DATAS
+         {
+             TransactionId = transaction.TransactionId,
+             Errors = transaction.Errors,
+             threads = transaction.threads
+         };
 
-      
+
 
          var response1 = new ValidatorService.Dtos.Transaction
          {
              TransactionId = transaction.TransactionId,
              Errors = transaction.Errors,
-         
+
          };
 
-       
+
 
          object lockObj = new object();
          List<Task> tasks = new List<Task>();
          for (int i = 0; i < (int)data.threads; i++)
          {
-           
+
 
              int current = i;
-             tasks.Add(Task.Run(async () => {
+             tasks.Add(Task.Run(async () =>
+             {
                  using (var channel = connection.CreateModel())
                  {
 
@@ -122,31 +126,30 @@ using (var _channel = connection.CreateModel())
                                          consumer: consumer);
 
                  }
-                 await Task.Delay(30000);
                  return Task.CompletedTask;
              }));
 
-          
+
          }
 
-              await Task.Delay(30000);
+         await Task.Delay(30000);
 
 
-             response1.Errors.RemoveAll(s => s == "");
-            
-             string response1Json = JsonSerializer.Serialize(response1);
-             byte[] response1Body = Encoding.UTF8.GetBytes(response1Json);
+         response1.Errors.RemoveAll(s => s == "");
 
-             using (var responseChannel = connection.CreateModel())
-             {
+         string response1Json = JsonSerializer.Serialize(response1);
+         byte[] response1Body = Encoding.UTF8.GetBytes(response1Json);
+
+         using (var responseChannel = connection.CreateModel())
+         {
 
 
-                 responseChannel.BasicPublish(exchange: "",
-                                              routingKey: "transactionfinal",
-                                              basicProperties: null,
-                                              body: response1Body);
-             }
-         
+             responseChannel.BasicPublish(exchange: "",
+                                          routingKey: "transactionfinal",
+                                          basicProperties: null,
+                                          body: response1Body);
+         }
+
      };
 
     _channel.BasicConsume(queue: "init",

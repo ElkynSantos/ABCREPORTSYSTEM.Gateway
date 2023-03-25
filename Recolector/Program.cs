@@ -46,7 +46,7 @@ using (var StreamReader = new StreamReader(@"C:\Users\elkyn\source\repos\ABCREPO
                 Task[] tasks = new Task[count / 50 + 1];
                 var body2= Encoding.UTF8.GetBytes((count / 50 + 1).ToString());
 
-
+                Console.Write(count / 50 + 1);
                 var consumer = new EventingBasicConsumer(_channel);
 
                 consumer.Received += (model, ea) =>
@@ -90,6 +90,9 @@ using (var StreamReader = new StreamReader(@"C:\Users\elkyn\source\repos\ABCREPO
                             int current = i;
                             tasks[i] = Task.Factory.StartNew(() =>
                             {
+
+                                //for para enviar los mensajes 
+                      
                                 int max = (current < count / 50) ? 50 : count % 50;
                                 for (int j = current * 50; j < current * 50 + max; j++)
                                 {
