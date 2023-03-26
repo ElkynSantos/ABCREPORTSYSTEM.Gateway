@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Text;
 using RabbitMQ.Client.Events;
+using Newtonsoft.Json;
 
 namespace ABCREPORTSYSTEM.Gateway.Controllers
 {
@@ -28,7 +29,7 @@ namespace ABCREPORTSYSTEM.Gateway.Controllers
             Transaction nueva = new Transaction();
           
 
-            string json = JsonSerializer.Serialize(nueva);
+            string json = System.Text.Json.JsonSerializer.Serialize(nueva);
 
             byte[] transac = Encoding.UTF8.GetBytes(json);
 
@@ -47,13 +48,15 @@ namespace ABCREPORTSYSTEM.Gateway.Controllers
                         channel.QueueDeclare("transactionfinal", false, false, false, null);
                         var consumer = new EventingBasicConsumer(channel);
                         string result = null;
+                       
                         var taskCompletionSource = new TaskCompletionSource<string>();
 
                         consumer.Received += (model, ea) =>
                         {
                             var responseBytes = ea.Body.ToArray();
                             result = Encoding.UTF8.GetString(responseBytes);
-                        
+                            Console.WriteLine(result);
+
                             taskCompletionSource.SetResult(result);
                         };
 
@@ -61,12 +64,14 @@ namespace ABCREPORTSYSTEM.Gateway.Controllers
 
                        
                         await taskCompletionSource.Task;
-
+                        var stringList = JsonConvert.DeserializeObject<List<string>>(result);
+                        nueva.Errors = stringList;
+                        /*
                         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                         var transactionResult = JsonSerializer.Deserialize<Transaction>(result, options);
 
-                        Transactions.Add(transactionResult);
-
+                          */
+                        Transactions.Add(nueva);
 
                         //channel.QueueDelete("init");
                         return Ok(Transactions.LastOrDefault());

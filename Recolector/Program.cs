@@ -106,8 +106,7 @@ using (var StreamReader = new StreamReader(@"C:\Users\elkyn\source\repos\ABCREPO
                                             exclusive: false,
                                             autoDelete: false,
                                             arguments: null);
-                                        string registro_json = JsonSerializer.Serialize(sales[j]);
-                                        Console.WriteLine(registro_json);
+                                        string registro_json = JsonSerializer.Serialize(sales[j]);                     
                                         var body = Encoding.UTF8.GetBytes(registro_json);
                                         channel.BasicPublish(
                                           exchange: "",

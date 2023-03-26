@@ -11,6 +11,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Recolector", "Recolector\Re
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValidatorService", "ValidatorService\ValidatorService.csproj", "{66C14687-2309-441F-849B-E893587BC129}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidatorService3", "ValidatorService3\ValidatorService3.csproj", "{6E221BFE-6A52-46CD-B84A-90BCC902B98D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RECOLLECTOR2", "RECOLLECTOR2\RECOLLECTOR2.csproj", "{930B995F-C768-4264-83D0-6A4FCDB92543}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{66C14687-2309-441F-849B-E893587BC129}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66C14687-2309-441F-849B-E893587BC129}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66C14687-2309-441F-849B-E893587BC129}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E221BFE-6A52-46CD-B84A-90BCC902B98D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E221BFE-6A52-46CD-B84A-90BCC902B98D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E221BFE-6A52-46CD-B84A-90BCC902B98D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E221BFE-6A52-46CD-B84A-90BCC902B98D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{930B995F-C768-4264-83D0-6A4FCDB92543}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{930B995F-C768-4264-83D0-6A4FCDB92543}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{930B995F-C768-4264-83D0-6A4FCDB92543}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{930B995F-C768-4264-83D0-6A4FCDB92543}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

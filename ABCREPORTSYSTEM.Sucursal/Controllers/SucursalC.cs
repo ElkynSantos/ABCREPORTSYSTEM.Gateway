@@ -28,7 +28,7 @@ public class SucursalC : ControllerBase
     public async Task<ActionResult<Employee>> GetEmployeById(string username, int id)
     {
 
-        string message2 = "No se encontro el users con el ID: " + username;
+        string message2 = "No se encontro el users con el ID: " + username +" en la sucursal:"+ id;
         var employee = await _empleado.GetemployeeByIdAsync(username);
         if (employee is null)
         {
@@ -133,7 +133,7 @@ public class SucursalC : ControllerBase
 
         if (sucursal is null)
         {
-            return NotFound("No se encontro ni la sucursal ni auto");
+            return NotFound("No se encontro ni la sucursal");
         }
         else
         {

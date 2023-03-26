@@ -29,10 +29,6 @@ var records = new List<Sales>();
 
 
 
-
-
-
-
 using (var connection = factory.CreateConnection())
 
 using (var _channel = connection.CreateModel())
@@ -102,7 +98,7 @@ using (var _channel = connection.CreateModel())
 
 
 
-                         // Console.WriteLine($"thread: {current}: {registro_json}");
+                          Console.WriteLine($"thread: {current}: {registro_json}");
 
                          Sales sale = JsonSerializer.Deserialize<Sales>(registro_json);
 
@@ -111,12 +107,20 @@ using (var _channel = connection.CreateModel())
 
                          string responseContent = await response.Content.ReadAsStringAsync();
                          string responseContent2 = await response2.Content.ReadAsStringAsync();
-                         lock (lockObj)
+                         if (!string.IsNullOrEmpty(responseContent) && !response1.Errors.Contains(responseContent))
                          {
-                             response1.Errors.Add(responseContent);
-                             response1.Errors.Add(responseContent2);
+                             lock (lockObj)
+                             {
+                                 response1.Errors.Add(responseContent);
+                             }
+                         }
 
-
+                         if (!string.IsNullOrEmpty(responseContent2) && !response1.Errors.Contains(responseContent2))
+                         {
+                             lock (lockObj)
+                             {
+                                 response1.Errors.Add(responseContent2);
+                             }
                          }
 
 
